@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="es">
+    <head>
+        <!-- Required meta tags -->
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <link rel="icon" type="image/png" href="android-icon-192x192.png">
+
+<!--         <link rel="manifest" href="/manifest.json"> -->
+
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black">
+        <meta name="apple-mobile-web-app-title" content="+ventamx">
+        <link rel="apple-touch-icon" href="android-icon-152x152.png">
+
+        <!-- Google metatags -->
+        <meta name="description" content="Lleva un registro de tus ventas y clientes estés donde estés, además premia la lealtad de tus consumidores regresándoles puntos por cada compra.">
+        <meta name="keywords" content="más,venta,negocio,tienda,contabilidad,punto de venta,código de barra,inventario,cliente,fidelidad,plan,tarjeta">
+
+        <!-- Facebook metatags -->
+        <meta property="fb:app_id" content="360955221180323">
+        <meta property="og:type" content="article">
+        <meta property="og:url" content="mas-venta.mx">
+        <meta property="og:title" content="+ventamx: Compra lo que quieras a cambio de lo que no imaginas.">
+        <meta property="og:image" content="images/15AC3932-E1F6-4B73-BCA8-E7FB0F5F9998.png">
+        <meta property="og:description" content="Lleva un registro de tus ventas y clientes estés donde estés, además premia la lealtad de tus consumidores regresándoles puntos por cada compra.">
+
+        <!-- Bootstrap CSS -->
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+        
+        <!-- Font awesome CSS -->
+        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css" integrity="sha384-oS3vJWv+0UjzBfQzYUhtDYW+Pj2yciDJxpsK1OYPAYjqT085Qq/1cq5FLXAZQ7Ay" crossorigin="anonymous">
+
+        <!-- Alertify CSS -->
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/alertifyjs@1.11.2/build/css/alertify.min.css">
+
+        <!-- Styles CSS -->
+        <style>
+            .background
+            {
+                background-image: url( 'books.png' );
+                background-position: center;
+                background-size: cover;
+                width: 100%;
+                color: white;
+            }
+        </style>
+
+        <!-- Title -->
+        <title>+Venta</title>
+    </head>
+    <body>
+        <section>
+            <article>
+                <div class="background" id="home">
+                    <div class="container pt-5">
+                        <img src="logo.png" alt="logo" class="mx-auto d-block">
+                        <ul class="list-unstyled">
+                            <li class="my-3">
+                                <a href="../" class="btn btn-lg btn-block btn-success"><i class="fas fa-door-open"></i> Entrar a la aplicación</a>
+                            </li>
+                            <li class="my-3">
+                                <button class="btn btn-lg btn-block btn-outline-light" onclick="load( 'name' );"><i class="fas fa-cogs"></i> Nombre del negocio</button>
+                            </li>
+                            <li class="my-3">
+                                <button class="btn btn-lg btn-block btn-outline-light" onclick="load( 'address' );"><i class="fas fa-cogs"></i> Domicilio del negocio</button>
+                            </li>
+                            <li class="my-3">
+                                <button class="btn btn-lg btn-block btn-outline-light"><i class="far fa-question-circle"></i> Tutoriales</button>
+                            </li>
+                            <li class="my-3">
+                                <button class="btn btn-lg btn-block btn-outline-light"><i class="fas fa-power-off"></i> Cerrar sesión</button>
+                            </li>
+                        </ul>                        
+                    </div>
+                </div>
+                <div class="background" id="name" style="display: none;">
+                    <div class="container pt-5">
+                        <img src="logo.png" alt="logo" class="mx-auto d-block mb-3">
+                        <h3 class="text-center">Nombre de tu negocio</h3>
+                        <form onsubmit="save( event, this, 'name' );">
+                            <div class="form-group">
+                                <label>Nombre de tu negocio</label>
+                                <input type="text" class="form-control" autocomplete="off" id="businessName">
+                            </div>
+                            <button type="button" class="btn btn-secondary" onclick="invertDisplays( 'name', 'home' );">Cancelar</button>
+                            <button type="submit" class="btn btn-primary">Aceptar</button>
+                        </form>
+                    </div>
+                </div>
+                <div class="background" id="addressDiv" style="display: none;">
+                    <div class="container pt-5">
+                        <img src="logo.png" alt="logo" class="mx-auto d-block mb-3">
+                        <h3 class="text-center">Tu domicilio</h3>
+                        <form onsubmit="save( event, this, 'address' );">
+                            <div class="form-group">
+                                <label>Calle, número y colonia</label>
+                                <input type="text" class="form-control form-control-sm" autocomplete="off" name="address" id="address">
+                            </div>
+                            <div class="form-group">
+                                <label>Código postal</label>
+                                <input type="number" class="form-control form-control-sm" autocomplete="off" name="zipCode" id="zipCode">
+                            </div>
+                            <div class="form-group">
+                                <label>Ciudad</label>
+                                <input type="text" class="form-control form-control-sm" autocomplete="off" name="city" id="city">
+                            </div>
+                            <div class="form-group">
+                                <label>Estado</label>
+                                <select class="form-control form-control-sm" name="state" id="state">
+                                    <option>Aguascalientes</option>
+                                    <option>Baja California</option>
+                                    <option>Baja California Sur</option>
+                                    <option>Campeche</option>
+                                    <option>Chiapas</option>
+                                    <option>Coahuila de Zaragoza</option>
+                                    <option>Colima</option>
+                                    <option>Ciudad de México</option>
+                                    <option>Durango</option>
+                                    <option>Guanajuato</option>
+                                    <option>Guerrero</option>
+                                    <option>Hidalgo</option>
+                                    <option>Jalisco</option>
+                                    <option>México</option>
+                                    <option>Michoacán de Ocampo</option>
+                                    <option>Morelos</option>
+                                    <option>Nayarit</option>
+                                    <option>Nuevo León</option>
+                                    <option>Oaxaca</option>
+                                    <option>Puebla</option>
+                                    <option>Querétaro</option>
+                                    <option>Quintana Roo</option>
+                                    <option>San Luis Potosí</option>
+                                    <option>Sinaloa</option>
+                                    <option>Sonora</option>
+                                    <option>Tabasco</option>
+                                    <option>Tamaulipas</option>
+                                    <option>Tlaxcala</option>
+                                    <option>Veracruz de Ignacio de la Llave</option>
+                                    <option>Yucatán</option>
+                                    <option>Zacatecas</option>
+                                </select>
+                            </div>
+                            <button type="button" class="btn btn-secondary" onclick="invertDisplays( 'addressDiv', 'home' );">Cancelar</button>
+                            <button type="submit" class="btn btn-primary">Aceptar</button>
+                        </form>                    
+                    </div>
+                </div>
+            </article>
+        </section>
+
+        <!-- jQuery JS -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
+
+        <!-- Alertify JS -->
+        <script src="https://cdn.jsdelivr.net/npm/alertifyjs@1.11.2/build/alertify.min.js"></script>
+
+        <!-- App JS -->
+        <script>
+            $( '.background' ).height( $( window ).height() );
+
+            function invertDisplays( from, to )
+            {
+                $( '#' + from ).hide();
+                $( '#' + to ).show();
+            }
+
+            function load( thing )
+            {
+                if ( thing == 'name' )
+                {
+                    var data = {
+                        bring: thing
+                    }
+
+                    $.ajax({
+                        method: 'POST',
+                        url: 'scripts/load.php',
+                        data: { data: JSON.stringify( data ) }
+                    }).done( function( info )
+                    {
+                        $( '#businessName' ).val( JSON.parse( info ).businessName );
+                        invertDisplays( 'home', 'name' );
+                        $( '#businessName' ).select();
+                    });
+                }else if ( thing == 'address' )
+                {
+                    var data = {
+                        bring: thing
+                    }
+
+                    $.ajax({
+                        method: 'POST',
+                        url: 'scripts/load.php',
+                        data: { data: JSON.stringify( data ) }
+                    }).done( function( info )
+                    {
+                        $( '#address' ).val( JSON.parse( info ).address );
+                        $( '#zipCode' ).val( JSON.parse( info ).zipCode );
+                        $( '#city' ).val( JSON.parse( info ).city );
+                        $( '#state' ).val( JSON.parse( info ).state );
+                        invertDisplays( 'home', 'addressDiv' );
+                        $( '#address' ).focus();
+                    });
+                }
+            }
+
+            function save( event, form, save )
+            {
+                event.preventDefault();
+
+                if ( save == 'name' )
+                {
+                    var data = {
+                        save: 'name',
+                        businessName: form.businessName.value
+                    }
+
+                    $.ajax({
+                        method: 'POST',
+                        url: 'scripts/save.php',
+                        data: { data: JSON.stringify( data ) }
+                    });
+
+                    alertify.notify( 'Nombre actualizado.', 'success' );
+                }else
+                {
+                    var data = {
+                        save: 'address',
+                        address: form.address.value,
+                        zipCode: form.zipCode.value,
+                        city: form.city.value,
+                        state: form.state.value
+                    }
+
+                    $.ajax({
+                        method: 'POST',
+                        url: 'scripts/save.php',
+                        data: { data: JSON.stringify( data ) }
+                    });
+
+                    alertify.notify( 'Dirección actualizada.', 'success' ); 
+                }
+            }
+        </script>
+    </body>
+</html>

@@ -1,0 +1,2087 @@
+<!DOCTYPE html>
+<html lang="es">
+    <head>
+        <!-- Required meta tags -->
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+<!--         <link rel="manifest" href="/manifest.json"> -->
+        <link rel="icon" type="image/png" href="android-icon-192x192.png">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black">
+        <meta name="apple-mobile-web-app-title" content="+ventamx">
+        <link rel="apple-touch-icon" href="android-icon-152x152.png">
+
+        <!-- Bootstrap CSS -->
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+        
+        <!-- Font awesome CSS -->
+        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css" integrity="sha384-oS3vJWv+0UjzBfQzYUhtDYW+Pj2yciDJxpsK1OYPAYjqT085Qq/1cq5FLXAZQ7Ay" crossorigin="anonymous">
+
+        <!-- Animate CSS -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.0/animate.min.css">
+
+        <!-- Alertify CSS -->
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/alertifyjs@1.11.2/build/css/alertify.min.css">
+
+        <!-- Styles CSS -->
+        <style>
+            #OptionsButton
+            {
+                top: 20px;
+                left: 10px;
+                position: fixed;
+                z-index: 1000;
+            }
+
+            #NumberPadButton
+            {
+                top: 20px;
+                right: 10px;
+                position: fixed;
+                z-index: 10000;
+            }
+
+            .fa-trash-alt,
+            .fa-backspace
+            {
+                color: #dc3545; 
+                cursor: pointer;
+            }
+
+            .fa-check-circle
+            {
+                color: #28a745; 
+                cursor: pointer;
+            }
+
+            .text-pad
+            {
+                bottom: 0px;
+                position: fixed;
+                z-index: 10000;
+            }
+
+            .text-pad-key
+            {
+                background-color: #eeeeee;
+                text-align: center;
+            }
+
+            .text-pad-key-t
+            {
+                background-color: #eeeeee;
+                color: transparent;
+                text-align: center;
+            }   
+
+            .number-pad
+            {
+                bottom: 0px;
+                position: fixed;
+                z-index: 1000;
+            }
+
+            .number-pad-key
+            {
+                background-color: #eeeeee;
+                font-size: 3rem;
+                font-weight: lighter;
+                text-align: center;
+            }
+
+            .number-pad-key-t
+            {
+                background-color: #eeeeee;
+                color: transparent;
+                font-size: 3rem;
+                text-align: center;
+            }
+
+            .options
+            {
+                background-color: #eeeeee;
+                top: 0px;
+                position: fixed;
+                z-index: 1000;
+            }
+
+            .options-key
+            {
+                background-color: #eeeeee;
+                padding-left: 15px;
+            }
+
+            .options-menu
+            {
+                float: right; 
+                padding-right: 15px; 
+                padding-top: 5px;
+            }
+
+            .start-screen
+            {
+                background-color: blue;
+                position: fixed;
+                z-index: 1200;
+                background: linear-gradient(90deg, #1c3643 0, #273b47 25%, #1e5372);
+            }
+
+            .options-title
+            {
+                background-color: blue;
+                font-weight: lighter;
+                color: white;
+                padding-left: 5px;
+            }
+        </style>
+
+        <!-- Title -->
+        <title>+Venta</title>
+    </head>
+    <body>
+        <center class="mt-5" id="Loader">
+            <div class="spinner-grow text-success" role="status">
+                <span class="sr-only">Cargando...</span>
+            </div>
+        </center>
+
+        <div class="start-screen" id="StartScreen" style="display: none;">
+            <img src="logo.png" class="d-block mx-auto my-5" align="logo">
+            <button class="btn btn-lg btn-success d-block mx-auto my-5" onclick="openBox();"><i class="fas fa-play-circle"></i> Iniciar | Abrir caja</button>
+            <button class="btn btn-lg btn-outline-light d-block mx-auto my-5" onclick="window.location.href = 'admin'">Salir</button>
+        </div>
+
+        <i class="fas fa-bars fa-lg" onclick="options();" id="OptionsButton"></i>
+        <i class="far fa-keyboard fa-lg" onclick="numberPad();" id="NumberPadButton"></i>
+
+        <div class="options" id="Options" style="display: none;">
+            <div class="options-key">Menú <i class="fas fa-bars options-menu" onclick="options();"></i></div>
+            <div class="options-title"><i class="fas fa-dollar-sign"></i> Caja</div>
+            <div class="options-key" onclick="screen( 'checkBalance' );">Consultar saldo</div>
+            <div class="options-key" onclick="screen( 'cashCuts' );">Cortes de caja</div>
+            <div class="options-key" onclick="screen( 'closeBox' );">Cerrar caja</div>
+            <div class="options-title"><i class="fas fa-plus"></i> Agregar</div>
+            <div class="options-key" onclick="screen( 'newCategory' );">Categoría</div>
+            <div class="options-key" onclick="screen( 'newProduct' );">Producto</div>
+            <div class="options-key" onclick="screen( 'newClient' );">Cliente</div>
+            <div class="options-title"><i class="fas fa-edit"></i> Editar</div>
+            <div class="options-key" onclick="screen( 'editCategory' );">Categoría</div>
+            <div class="options-key" onclick="screen( 'editProduct' );">Producto</div>
+            <div class="options-key" onclick="screen( 'editClient' );">Cliente</div>
+            <div class="options-title"><i class="fas fa-user"></i> Sesión</div>
+            <div class="options-key" onclick="screen( 'help' );">Tutoriales</div>
+            <div class="options-key" onclick="window.location.href = 'admin'">Salir</div>
+        </div>
+
+        <div class="container" id="ReceiptCard" style="display: none;">
+            <img src="logo1.png" class="d-block mx-auto my-3" align="logo">
+            <div class="card">
+                <h5 class="card-header">Recibo</h5>
+                <div class="card-body">
+                    <form class="input-group mb-2" onsubmit="addItemBySKU( event, this );" id="SKUForm">
+                        <input type="number" step="1" min="0" name="SKU" id="SKU" class="form-control" placeholder="Ingresa un código de barras" autofocus required oninput="focusThis( 'SKUForm', 'SKU' );" onfocus="focusThis( 'SKUForm', 'SKU' );">
+                    </form>
+                     <table class="table table-sm table-hover table-bordered" id="itemsTable">
+                         <thead>
+                             <tr>
+                                 <th></th>
+                                 <th>Can</th>
+                                 <th>Concepto</th>
+                                 <th>Precio</th>
+                             </tr>
+                         </thead>
+                         <tbody></tbody>
+                         <tfoot>
+                             <tr>
+                                 <th colspan="2" class="align-middle text-right"><span class="mr-5">Total</span></th>
+                                 <th colspan="2"><h2 class="text-right" id="total">$0.00</h2></th>
+                             </tr>
+                         </tfoot>
+                     </table>
+                     <button class="btn btn-secondary btn-block" onclick="charge();" id="chargeButton" disabled>Cobrar</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="container" id="ChargeDiv" style="display: none;">
+            <img src="logo1.png" class="d-block mx-auto my-3" align="logo">
+            <div class="card">
+                <h5 class="card-header"><i class="fas fa-share-square fa-flip-horizontal" style="float: right;" onclick="back();"></i> Cobro</h5>
+                <div class="card-body">
+                    <div id="clientDiv">
+                        <h5 class="card-title">Cliente</h5>
+                        <form class="input-group my-2" onsubmit="setClient( event, this );" id="ClientForm">
+                            <input type="number" step="1" min="0" name="client" id="client" class="form-control" placeholder="Ingresa el código de un cliente" oninput="focusThis( 'ClientForm', 'client' );" onfocus="focusThis( 'ClientForm', 'client' );" required>
+                        </form>
+                        <hr>
+                    </div>
+                    <h2>Importe a cobrar <span id="amount">$0.00</span></h2>
+                    <h5 class="card-title mt-3">Método de pago</h5>
+                    <div class="input-group my-2">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fas fa-dollar-sign"></i></span>
+                            <span class="input-group-text">Efectivo</span>
+                        </div>
+                        <input type="number" step="0.01" min="0" class="form-control" onkeyup="due();" oninput="focusThis( null, 'cash' );" onfocus="focusThis( null, 'cash' );" id="cash">
+                    </div>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fas fa-credit-card"></i></span>
+                            <span class="input-group-text">Tarjeta</span>
+                        </div>
+                        <input type="number" step="0.01" min="0" class="form-control" onkeyup="due();" oninput="focusThis( null, 'card' );" onfocus="focusThis( null, 'card' );" id="card">
+                    </div>
+                    <button type="button" class="btn btn-secondary btn-block mt-3" id="finishButton" onclick="finish();" disabled>Cambio $0.00</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="number-pad" id="NumberPad" style="display: none;">
+            <div class="d-block"><div class="d-inline-block number-pad-key" onclick="digit( '7' );">7</div><div class="d-inline-block number-pad-key" onclick="digit( '8' );">8</div><div class="d-inline-block number-pad-key" onclick="digit( '9' );">9</div><div class="d-inline-block number-pad-key-t">x</div></div>
+            <div class="d-block"><div class="d-inline-block number-pad-key" onclick="digit( '4' );">4</div><div class="d-inline-block number-pad-key" onclick="digit( '5' );">5</div><div class="d-inline-block number-pad-key" onclick="digit( '6' );">6</div><div class="d-inline-block number-pad-key" onclick="digit( 'enter' );"><i class="fas fa-check-circle"></i></div></div>
+            <div class="d-block"><div class="d-inline-block number-pad-key" onclick="digit( '1' );">1</div><div class="d-inline-block number-pad-key" onclick="digit( '2' );">2</div><div class="d-inline-block number-pad-key" onclick="digit( '3' );">3</div><div class="d-inline-block number-pad-key" onclick="digit( 'delete' );"><i class="fas fa-backspace"></i></div></div>
+            <div class="d-block"><div class="d-inline-block number-pad-key-t">x</div><div class="d-inline-block number-pad-key" onclick="digit( '0' );">0</div><div class="d-inline-block number-pad-key" onclick="digit( '.' );">.</div><div class="d-inline-block number-pad-key-t" onclick="numberPad();"><i class="far fa-eye-slash text-dark"></i></div></div>
+        </div>
+
+        <div class="text-pad" id="TextPadLower" style="display: none;">
+            <div class="d-block"><div class="d-inline-block text-pad-key" onclick="digit( 1 );">1</div><div class="d-inline-block text-pad-key" onclick="digit( 2 );">2</div><div class="d-inline-block text-pad-key" onclick="digit( 3 );">3</div><div class="d-inline-block text-pad-key" onclick="digit( 4 );">4</div><div class="d-inline-block text-pad-key" onclick="digit( 5 );">5</div><div class="d-inline-block text-pad-key" onclick="digit( 6 );">6</div><div class="d-inline-block text-pad-key" onclick="digit( 7 );">7</div><div class="d-inline-block text-pad-key" onclick="digit( 8 );">8</div><div class="d-inline-block text-pad-key" onclick="digit( 9 );">9</div><div class="d-inline-block text-pad-key" onclick="digit( 0 );">0</div></div>
+            <div class="d-block"><div class="d-inline-block text-pad-key" onclick="digit( 'q' );">q</div><div class="d-inline-block text-pad-key" onclick="digit( 'w' );">w</div><div class="d-inline-block text-pad-key" onclick="digit( 'e' );">e</div><div class="d-inline-block text-pad-key" onclick="digit( 'r' );">r</div><div class="d-inline-block text-pad-key" onclick="digit( 't' );">t</div><div class="d-inline-block text-pad-key" onclick="digit( 'y' );">y</div><div class="d-inline-block text-pad-key" onclick="digit( 'u' );">u</div><div class="d-inline-block text-pad-key" onclick="digit( 'i' );">i</div><div class="d-inline-block text-pad-key" onclick="digit( 'o' );">o</div><div class="d-inline-block text-pad-key" onclick="digit( 'p' );">p</div></div>
+            <div class="d-block"><div class="d-inline-block text-pad-key" onclick="digit( 'a' );">a</div><div class="d-inline-block text-pad-key" onclick="digit( 's' );">s</div><div class="d-inline-block text-pad-key" onclick="digit( 'd' );">d</div><div class="d-inline-block text-pad-key" onclick="digit( 'f' );">f</div><div class="d-inline-block text-pad-key" onclick="digit( 'g' );">g</div><div class="d-inline-block text-pad-key" onclick="digit( 'h' );">h</div><div class="d-inline-block text-pad-key" onclick="digit( 'j' );">j</div><div class="d-inline-block text-pad-key" onclick="digit( 'k' );">k</div><div class="d-inline-block text-pad-key" onclick="digit( 'l' );">l</div><div class="d-inline-block text-pad-key" onclick="digit( 'ñ' );">ñ</div></div>
+            <div class="d-block"><div class="d-inline-block text-pad-key" onclick="digit( 'z' );">z</div><div class="d-inline-block text-pad-key" onclick="digit( 'x' );">x</div><div class="d-inline-block text-pad-key" onclick="digit( 'c' );">c</div><div class="d-inline-block text-pad-key" onclick="digit( 'v' );">v</div><div class="d-inline-block text-pad-key" onclick="digit( 'b' );">b</div><div class="d-inline-block text-pad-key" onclick="digit( 'n' );">n</div><div class="d-inline-block text-pad-key" onclick="digit( 'm' );">m</div><div class="d-inline-block text-pad-key" onclick="digit( '.' );">.</div><div class="d-inline-block text-pad-key" onclick="digit( '-' );">-</div><div class="d-inline-block text-pad-key" onclick="digit( '_' );">_</div></div>
+            <div class="d-block"><div class="d-inline-block text-pad-key" onclick="changeKeyboard( 'lower' );">ABC</div><div class="d-inline-block text-pad-key" onclick="digit( '@' );">@</div><div class="d-inline-block text-pad-key-t" onclick="digit( ' ' );">x</div><div class="d-inline-block text-pad-key-t" onclick="digit( ' ' );">x</div><div class="d-inline-block text-pad-key-t" onclick="digit( ' ' );">x</div><div class="d-inline-block text-pad-key-t" onclick="digit( ' ' );">x</div><div class="d-inline-block text-pad-key-t" onclick="digit( ' ' );">x</div><div class="d-inline-block text-pad-key-t" onclick="digit( ' ' );">x</div><div class="d-inline-block text-pad-key" onclick="digit( 'deleteLastone' );"><i class="fas fa-backspace"></i></div><div class="d-inline-block text-pad-key"  onclick="numberPad();"><i class="far fa-eye-slash text-dark"></i></div></div>
+        </div>
+
+        <div class="text-pad" id="TextPadUpper" style="display: none;">
+            <div class="d-block"><div class="d-inline-block text-pad-key" onclick="digit( 1 );">1</div><div class="d-inline-block text-pad-key" onclick="digit( 2 );">2</div><div class="d-inline-block text-pad-key" onclick="digit( 3 );">3</div><div class="d-inline-block text-pad-key" onclick="digit( 4 );">4</div><div class="d-inline-block text-pad-key" onclick="digit( 5 );">5</div><div class="d-inline-block text-pad-key" onclick="digit( 6 );">6</div><div class="d-inline-block text-pad-key" onclick="digit( 7 );">7</div><div class="d-inline-block text-pad-key" onclick="digit( 8 );">8</div><div class="d-inline-block text-pad-key" onclick="digit( 9 );">9</div><div class="d-inline-block text-pad-key" onclick="digit( 0 );">0</div></div>
+            <div class="d-block"><div class="d-inline-block text-pad-key" onclick="digit( 'Q' );">Q</div><div class="d-inline-block text-pad-key" onclick="digit( 'W' );">W</div><div class="d-inline-block text-pad-key" onclick="digit( 'E' );">E</div><div class="d-inline-block text-pad-key" onclick="digit( 'R' );">R</div><div class="d-inline-block text-pad-key" onclick="digit( 'T' );">T</div><div class="d-inline-block text-pad-key" onclick="digit( 'Y' );">Y</div><div class="d-inline-block text-pad-key" onclick="digit( 'U' );">U</div><div class="d-inline-block text-pad-key" onclick="digit( 'I' );">I</div><div class="d-inline-block text-pad-key" onclick="digit( 'O' );">O</div><div class="d-inline-block text-pad-key" onclick="digit( 'P' );">P</div></div>
+            <div class="d-block"><div class="d-inline-block text-pad-key" onclick="digit( 'A' );">A</div><div class="d-inline-block text-pad-key" onclick="digit( 'S' );">S</div><div class="d-inline-block text-pad-key" onclick="digit( 'D' );">D</div><div class="d-inline-block text-pad-key" onclick="digit( 'F' );">F</div><div class="d-inline-block text-pad-key" onclick="digit( 'G' );">G</div><div class="d-inline-block text-pad-key" onclick="digit( 'H' );">H</div><div class="d-inline-block text-pad-key" onclick="digit( 'J' );">J</div><div class="d-inline-block text-pad-key" onclick="digit( 'K' );">K</div><div class="d-inline-block text-pad-key" onclick="digit( 'L' );">L</div><div class="d-inline-block text-pad-key" onclick="digit( 'Ñ' );">Ñ</div></div>
+            <div class="d-block"><div class="d-inline-block text-pad-key" onclick="digit( 'Z' );">Z</div><div class="d-inline-block text-pad-key" onclick="digit( 'X' );">X</div><div class="d-inline-block text-pad-key" onclick="digit( 'C' );">C</div><div class="d-inline-block text-pad-key" onclick="digit( 'V' );">V</div><div class="d-inline-block text-pad-key" onclick="digit( 'B' );">B</div><div class="d-inline-block text-pad-key" onclick="digit( 'N' );">N</div><div class="d-inline-block text-pad-key" onclick="digit( 'M' );">M</div><div class="d-inline-block text-pad-key" onclick="digit( '.' );">.</div><div class="d-inline-block text-pad-key" onclick="digit( '-' );">-</div><div class="d-inline-block text-pad-key" onclick="digit( '_' );">_</div></div>
+            <div class="d-block"><div class="d-inline-block text-pad-key" onclick="changeKeyboard( 'upper' );">abc</div><div class="d-inline-block text-pad-key" onclick="digit( '@' );">@</div><div class="d-inline-block text-pad-key-t" onclick="digit( ' ' );">x</div><div class="d-inline-block text-pad-key-t" onclick="digit( ' ' );">x</div><div class="d-inline-block text-pad-key-t" onclick="digit( ' ' );">x</div><div class="d-inline-block text-pad-key-t" onclick="digit( ' ' );">x</div><div class="d-inline-block text-pad-key-t" onclick="digit( ' ' );">x</div><div class="d-inline-block text-pad-key-t" onclick="digit( ' ' );">x</div><div class="d-inline-block text-pad-key" onclick="digit( 'deleteLastone' );"><i class="fas fa-backspace"></i></div><div class="d-inline-block text-pad-key"  onclick="numberPad();"><i class="far fa-eye-slash text-dark"></i></div></div>
+        </div>
+
+        <div class="modal fade bd-example-modal-lg" id="modal" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static">
+            <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+                <form class="modal-content" id="modalContent"></form>
+            </div>
+        </div>
+
+        <!-- jQuery JS -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+
+        <!-- Numeral JS -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/numeral.js/2.0.6/numeral.min.js"></script>
+
+        <!-- Alertify JS -->
+        <script src="https://cdn.jsdelivr.net/npm/alertifyjs@1.11.2/build/alertify.min.js"></script>
+
+        <!-- Chart JS -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js"></script>
+
+        <!-- App JS -->
+        <script>
+            const h = $( document ).height();
+            const w = $( document ).width();
+
+            $( '#NumberPad' ).height( w );
+            $( '#NumberPad' ).width( w );
+            $( '.number-pad-key' ).height( w / 4 );
+            $( '.number-pad-key' ).width( w / 4 );
+            $( '.number-pad-key-t' ).height( w / 4 );
+            $( '.number-pad-key-t' ).width( w / 4 );
+
+            $( '#Options' ).height( h );
+            $( '#Options' ).width( w * 0.75 );
+
+            $( '#StartScreen' ).height( h );
+            $( '#StartScreen' ).width( w );
+
+            $( '#TextPadUpper' ).height( 150 );
+            $( '#TextPadUpper' ).width( w );
+            $( '#TextPadLower' ).height( 150 );
+            $( '#TextPadLower' ).width( w );
+            $( '.text-pad-key' ).height( 30 );
+            $( '.text-pad-key' ).width( w / 10 );
+            $( '.text-pad-key-t' ).height( 30 );
+            $( '.text-pad-key-t' ).width( w / 10 );
+
+            var Total = 0,
+            Client = '',
+            ClientPoints = 0,
+            Points = 0,
+            AccumulatePoints = false;
+
+            $( document ).ready( function()
+            {
+                // AJAX query
+                $.ajax({
+                    method: 'POST',
+                    url: 'scripts/checkIfSessionExist.php'
+                }).done( function( info )
+                {
+                    // Draw receipt
+                    for ( var i = 0; i < JSON.parse( info ).items.length; i++ )
+                    {
+                        $( '#itemsTable tbody' ).append( `
+                            <tr>
+                                <td class="text-center"><i class="fas fa-trash-alt" onclick="removeThisItem( this, '${ JSON.parse( info ).items[i].control }', '${ JSON.parse( info ).items[i].price }', '${ JSON.parse( info ).items[i].points }' );"></i></td>
+                                <td class="text-center">${ numeral( JSON.parse( info ).items[i].quantity ).format( '0,0' ) }</td>
+                                <td>${ JSON.parse( info ).items[i].concept }</td>
+                                <td class="text-right">${ numeral( JSON.parse( info ).items[i].price ).format( '0,0.00' ) }</td>
+                            </tr>
+                        ` );
+                    }
+
+                    // Set total
+                    Total = JSON.parse( info ).total;
+                    $( '#total' ).html( numeral( Total ).format( '$0,0.00' ) );
+
+                    // Set points
+                    Points += JSON.parse( info ).points;
+
+                    // Set button state
+                    if ( Total > 0 )
+                    {
+                        $( '#chargeButton' ).removeClass( 'btn-secondary' );
+                        $( '#chargeButton' ).addClass( 'btn-success' );
+                        $( '#chargeButton' ).removeAttr( 'disabled' );
+                    }
+
+                    $( 'body' ).css( 'background-image', 'url( "tileable_wood_texture.png" )' );
+                    $( '#Loader' ).hide();
+                    if ( JSON.parse( info ).started )
+                    {
+                        $( '#ReceiptCard' ).show();
+                    }else
+                    {
+                        $( '#StartScreen' ).show();
+                    }
+                });
+            });
+
+            function changeKeyboard( to )
+            {
+                if ( to == 'lower' )
+                {
+                    $( '#TextPadUpper' ).show();
+                    $( '#TextPadLower' ).hide();
+                }else
+                {
+                    $( '#TextPadUpper' ).hide();
+                    $( '#TextPadLower' ).show();   
+                }
+            }
+
+            function openBox()
+            {
+                $.ajax({
+                    method: 'POST',
+                    url: 'scripts/openBox.php'
+                }).done( function( info )
+                {
+                    animateCSS( '#StartScreen', 'fadeOut', function()
+                    {
+                        $( '#ReceiptCard' ).show();
+                        $( '#StartScreen' ).hide();
+                        $( '#SKU' ).focus();
+                    });
+                });
+            }
+
+            function checkBalance( event, form )
+            {
+                event.preventDefault();
+
+                $( '#clientCode' ).removeClass( 'is-invalid' );
+
+                var data = {
+                    client: form.client.value
+                }
+
+                $.ajax({
+                    method: 'POST',
+                    url: 'scripts/checkBalance.php',
+                    data: { data: JSON.stringify( data ) }
+                }).done( function( info )
+                {
+                    if ( JSON.parse( info ).response )
+                    {
+                        $( '#modalContent' ).html( `
+                            <div class="modal-header">
+                                <h5 class="modal-title">Consultar saldo</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <h5>Usted tiene ${ JSON.parse( info ).balance } puntos.</h5>
+                            </div>
+                        ` );
+                    }else
+                    {
+                        animateCSS( '#clientCode', 'shake' );
+                        $( '#clientCode' ).addClass( 'is-invalid' );
+                        form.client.value = '';
+                        form.client.focus();
+                    }
+                });
+            }
+
+            function cashCuts( event, form )
+            {
+                event.preventDefault();
+
+                var data = {
+                    start: form.start.value + ' 00:00:00',
+                    end: form.end.value + ' 23:00:00'
+                }
+
+                $.ajax({
+                    method: 'POST',
+                    url: 'scripts/cashCuts.php',
+                    data: { data: JSON.stringify( data ) }
+                }).done( function( info )
+                {
+                    $( '#modalContent' ).removeAttr( 'onsubmit' );
+
+                    $( '#modalContent' ).html( `
+                        <div class="modal-header">
+                            <h5 class="modal-title">Cortes de caja</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <table class="table table-sm table-striped" id="cashCuts">
+                                <tbody></tbody>
+                            </table> 
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                            <button type="button" class="btn btn-primary" onclick="screen( 'cashCuts' );">Buscar otro</button>
+                        </div>
+                    ` );
+
+                    for ( var i = 0; i < JSON.parse( info ).length; i++ )
+                    {
+                        $( '#cashCuts tbody' ).append( `
+                            <tr>
+                                <td>${ i + 1 }</td>
+                                <td>${ JSON.parse( info )[i].dates }</td>
+                                <td>
+                                    <button type="button" class="btn btn-link" onclick="showBoxCut( '${ JSON.parse( info )[i].ID }' );">${ JSON.parse( info )[i].amount }</button>
+                                </td>
+                            </tr>
+                        ` );
+                    }
+                });
+            }
+
+            function showBoxCut( ID )
+            {
+                var data = {
+                    ID: ID
+                }
+
+                $.ajax({
+                    method: 'POST',
+                    url: 'scripts/showBoxCut.php',
+                    data: { data: JSON.stringify( data ) }
+                }).done( function( info )
+                {
+                    $( '#modalContent' ).removeAttr( 'onsubmit' );
+
+                    $( '#modalContent' ).html( `
+                        <div class="modal-header">
+                            <h5 class="modal-title">Cortes de caja</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <p><b>Ingresos</b></p>
+                            <table class="table table-sm">
+                                <tbody>
+                                    <tr>
+                                        <td>Ventas</td>
+                                        <td>${ numeral( JSON.parse( info ).sells ).format( '0,0.00' ) }</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Descuentos sobre ventas (puntos)</td>
+                                        <td>${ numeral( JSON.parse( info ).pointsUsed ).format( '0,0.00' ) }</td>
+                                    </tr>
+                                    <tr>
+                                        <td><b>Ventas netas</b></td>
+                                        <td><b>${ numeral( JSON.parse( info ).netSells ).format( '0,0.00' ) }</b></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <p><b>Saldo en caja</b></p>
+                            <table class="table table-sm">
+                                <tbody>
+                                    <tr>
+                                        <td>Efectivo</td>
+                                        <td>${ numeral( JSON.parse( info ).cash ).format( '0,0.00' ) }</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Tarjeta</td>
+                                        <td>${ numeral( JSON.parse( info ).card ).format( '0,0.00' ) }</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <p><b>Cobros con tarjeta</b></p>
+                            <table class="table table-sm table-striped" id="cardList">
+                                <tbody></tbody>
+                            </table>
+                            <hr>
+                            <p><b>Recibos emitidos</b></p>
+                            <table class="table table-sm table-striped" id="ticketsList">
+                                <tbody></tbody>
+                            </table>
+                            <hr>
+                            <p><b>Productos vendidos</b></p>
+                            <table class="table table-sm table-striped" id="itemsList">
+                                <tbody></tbody>
+                            </table> 
+                            <p><b>Recibos que usaron puntos</b></p>
+                            <table class="table table-sm table-striped" id="receiptWithPointsTable">
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                            <button type="button" class="btn btn-primary" onclick="screen( 'cashCuts' );">Buscar otro</button>
+                        </div>
+                    ` );
+
+                    for ( var c = 0; c < JSON.parse( info ).cardPayments.length; c++ )
+                    {
+                        $( '#cardList tbody' ).append( `
+                            <tr>
+                                <td>${ JSON.parse( info ).cardPayments[c].receipt }</td>
+                                <td>${ JSON.parse( info ).cardPayments[c].client }</td>
+                                <td>${ numeral( JSON.parse( info ).cardPayments[c].amount ).format( '0,0.00' ) }</td>
+                            </tr>
+                        ` );
+                    }
+
+                    for ( var a = 0; a < JSON.parse( info ).receipts.length; a++ )
+                    {
+                        $( '#ticketsList tbody' ).append( `
+                            <tr>
+                                <td>${ JSON.parse( info ).receipts[a].receipt }</td>
+                                <td>${ JSON.parse( info ).receipts[a].client }</td>
+                                <td>${ numeral( JSON.parse( info ).receipts[a].amount ).format( '0,0.00' ) }</td>
+                            </tr>
+                        ` );
+                    }
+
+                    for ( var b = 0; b < JSON.parse( info ).items.length; b++ )
+                    {
+                        $( '#itemsList tbody' ).append( `
+                            <tr>
+                                <td>${ JSON.parse( info ).items[b].concept }</td>
+                                <td>${ numeral( JSON.parse( info ).items[b].quantity ).format( '0,0' ) }</td>
+                            </tr>
+                        ` );
+                    }
+
+                    for ( var d = 0; d < JSON.parse( info ).receiptWithPointsTable.length; d++ )
+                    {
+                        $( '#receiptWithPointsTable tbody' ).append( `
+                            <tr>
+                                <td>${ JSON.parse( info ).receiptWithPointsTable[d].receipt }</td>
+                                <td>${ JSON.parse( info ).receiptWithPointsTable[d].client }</td>
+                                <td>${ numeral( JSON.parse( info ).receiptWithPointsTable[d].points ).format( '0,0.00' ) }</td>
+                            </tr>
+                        ` );
+                    }
+                });
+            }
+
+            function closeBox()
+            {
+                $.ajax({
+                    method: 'POST',
+                    url: 'scripts/closeBox.php'
+                }).done( function( info )
+                {
+                    $( '#modal' ).modal( 'hide' );
+                    window.scrollTo( 0, 0 );
+                    $( '#ReceiptCard' ).hide();
+                    $( '#Options' ).hide();
+                    $( '#StartScreen' ).show();
+                    animateCSS( '#StartScreen', 'fadeIn' );
+                });
+            }
+
+            function editCategory( event, form )
+            {
+                event.preventDefault();
+
+                $( '#categoryName' ).removeClass( 'is-invalid' );
+
+                var data = {
+                    lastName: form.lastName.value,
+                    newName: form.newName.value
+                }
+
+                $.ajax({
+                    method: 'POST',
+                    url: 'scripts/editCategory.php',
+                    data: { data: JSON.stringify( data ) }
+                }).done( function( info )
+                {
+                    if ( JSON.parse( info ) )
+                    {
+                        $( '#TextPadLower' ).hide();
+                        $( '#TextPadUpper' ).hide();
+                        $( '#modal' ).modal( 'hide' );
+                        animateCSS( '#Options', 'slideOutLeft', function()
+                        {
+                            $( '#Options' ).hide();
+                        });
+                        window.scrollTo( 0, 0 );
+                        alertify.notify( 'Categoría editada.', 'success' );
+                        $( '#SKU' ).focus();
+                    }else
+                    {
+                        animateCSS( '#categoryName', 'shake' );
+                       $( '#categoryName' ).addClass( 'is-invalid' ); 
+                    }
+                });
+            }
+
+            function screen( select )
+            {
+                if ( select == 'checkBalance' )
+                {
+                    $( '#modalContent' ).attr( 'onsubmit', 'checkBalance( event, this );' );
+
+                    $( '#modalContent' ).html( `
+                        <div class="modal-header">
+                            <h5 class="modal-title">Consultar saldo</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label>Ingresa el código del cliente.</label>
+                                <input type="number" class="form-control" autocomplete="off" oninput="focusThis( 'checkBalance', 'clientCode' )" onfocus="focusThis( 'addNewClient', 'clientCode' )" name="client" id="clientCode" required>
+                                <div class="invalid-feedback">El cliente no existe.</div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                            <button type="submit" class="btn btn-primary">Aceptar</button>
+                        </div>
+                    ` );
+
+                    $( '#modal' ).modal( 'show' );
+
+                    setTimeout( function(){ $( '#clientCode' ).focus() }, 500 );
+                }else if ( select == 'closeBox' )
+                {
+                    $( '#modalContent' ).removeAttr( 'onsubmit' );
+
+                    $( '#modalContent' ).html( `
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <h5>¿Quieres cerrar caja?</h5>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                            <button type="button" class="btn btn-primary" onclick="closeBox();">Aceptar</button>
+                        </div>
+                    ` );
+
+                    $( '#modal' ).modal( 'show' );
+                }else if ( select == 'newCategory' )
+                {
+                    $( '#modalContent' ).attr( 'onsubmit', 'addNewCategory( event, this );' );
+
+                    $( '#modalContent' ).html( `
+                        <div class="modal-header">
+                            <h5 class="modal-title">Agrega una nueva categoría</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label>Ingresa el nombre de una categoría</label>
+                                <input type="text" class="form-control" autocomplete="off" oninput="focusThis( 'addNewCategory', 'categoryName' )" onfocus="focusThis( 'addNewCategory', 'categoryName' )" name="category" id="categoryName" required>
+                                <div class="invalid-feedback">Categoría repetida.</div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                            <button type="submit" class="btn btn-primary">Guardar</button>
+                        </div>
+                    ` );
+
+                    $( '#modal' ).modal( 'show' );
+
+                    setTimeout( function(){ $( '#categoryName' ).focus() }, 500 );
+                }else if ( select == 'newProduct' )
+                {
+                    $( '#modalContent' ).attr( 'onsubmit', 'checkSKU( event, this, "new" );' );
+
+                    $( '#modalContent' ).html( `
+                        <div class="modal-header">
+                            <h5 class="modal-title">Agrega nuevo producto</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label>Ingresa un código de barras.</label>
+                                <input type="number" step="1" min="0" name="SKU" id="newSKU" class="form-control" oninput="focusThis( 'checkSKU', 'newSKU' )" onfocus="focusThis( 'checkSKU', 'newSKU' )" required>
+                                <div class="invalid-feedback">Código de barras repetido.</div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                            <button type="submit" class="btn btn-primary">Guardar</button>
+                        </div>
+                    ` );
+
+                    $( '#modal' ).modal( 'show' );
+
+                    setTimeout( function(){ $( '#newSKU' ).focus() }, 500 );
+                }else if ( select == 'newClient' )
+                {
+                    $( '#modalContent' ).attr( 'onsubmit', 'checkClient( event, this, "new" );' );
+
+                    $( '#modalContent' ).html( `
+                        <div class="modal-header">
+                            <h5 class="modal-title">Agrega nuevo cliente</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label>Ingresa el código del nuevo cliente.</label>
+                                <input type="number" class="form-control" autocomplete="off" oninput="focusThis( 'checkClient', 'newClientCode' )" onfocus="focusThis( 'checkClient', 'newClientCode' )" name="client" id="newClientCode" required>
+                                <div class="invalid-feedback">Cliente repetido.</div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                            <button type="submit" class="btn btn-primary">Guardar</button>
+                        </div>
+                    ` );
+
+                    $( '#modal' ).modal( 'show' );
+
+                    setTimeout( function(){ $( '#newClientCode' ).focus() }, 500 );
+                }else if ( select == 'editCategory' )
+                {
+                    $.ajax({
+                        method: 'POST',
+                        url: 'scripts/loadCategories.php'
+                    }).done( function( info )
+                    {
+                        $( '#modalContent' ).attr( 'onsubmit', 'editCategory( event, this );' );
+
+                        $( '#modalContent' ).html( `
+                            <div class="modal-header">
+                                <h5 class="modal-title">Editar categoría</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="form-group">
+                                    <label>Elige la categoría a editar.</label>
+                                    <select class="form-control" name="lastName" id="categoriesList"></select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Nuevo nombre de categoría.</label>
+                                    <input type="text" class="form-control" autocomplete="off" oninput="focusThis( 'editCategory', 'categoryName' )" onfocus="focusThis( 'editCategory', 'categoryName' )" name="newName" id="categoryName" required>
+                                    <div class="invalid-feedback">Categoría repetida.</div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                                <button type="submit" class="btn btn-primary">Actualizar</button>
+                            </div>
+                        ` );
+
+                        for ( var i = 0; i < JSON.parse( info ).length; i++ )
+                        {
+                            $( '#categoriesList' ).append( `
+                                <option>${ JSON.parse( info )[i] }</option>
+                            `);
+                        }
+
+                        $( '#modal' ).modal( 'show' );
+
+                        setTimeout( function(){ $( '#categoryName' ).focus() }, 500 );
+                    });
+                }else if ( select == 'editProduct' )
+                {
+                    $( '#modalContent' ).attr( 'onsubmit', 'checkSKU( event, this, "edit" );' );
+
+                    $( '#modalContent' ).html( `
+                        <div class="modal-header">
+                            <h5 class="modal-title">Agrega nuevo producto</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label>Ingresa un código de barras.</label>
+                                <input type="number" step="1" min="0" name="SKU" id="newSKU" class="form-control" oninput="focusThis( 'checkSKU', 'newSKU' )" onfocus="focusThis( 'checkSKU', 'newSKU' )" required>
+                                <div class="invalid-feedback">Código de barras no existe.</div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                            <button type="submit" class="btn btn-primary">Buscar</button>
+                        </div>
+                    ` );
+
+                    $( '#modal' ).modal( 'show' );
+
+                    setTimeout( function(){ $( '#newSKU' ).focus() }, 500 );
+                }else if ( select == 'editClient' )
+                {
+                    $( '#modalContent' ).attr( 'onsubmit', 'checkClient( event, this, "edit" );' );
+
+                    $( '#modalContent' ).html( `
+                        <div class="modal-header">
+                            <h5 class="modal-title">Editar cliente</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label>Ingresa el código del nuevo cliente.</label>
+                                <input type="number" class="form-control" autocomplete="off" oninput="focusThis( 'editClient', 'newClientCode' )" onfocus="focusThis( 'editClient', 'newClientCode' )" name="client" id="newClientCode" required>
+                                <div class="invalid-feedback">Cliente no existe.</div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                            <button type="submit" class="btn btn-primary">Actualizar</button>
+                        </div>
+                    ` );
+
+                    $( '#modal' ).modal( 'show' );
+
+                    setTimeout( function(){ $( '#newClientCode' ).focus() }, 500 );
+                }else if ( select == 'cashCuts' )
+                {
+                    $( '#modalContent' ).attr( 'onsubmit', 'cashCuts( event, this );' );
+
+                    $( '#modalContent' ).html( `
+                        <div class="modal-header">
+                            <h5 class="modal-title">Cortes de caja</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label>Fecha inicial.</label>
+                                <input type="date" class="form-control" autocomplete="off" name="start">
+                            </div>
+                            <div class="form-group">
+                                <label>Fecha final.</label>
+                                <input type="date" class="form-control" autocomplete="off" name="end">
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                            <button type="submit" class="btn btn-primary">Aceptar</button>
+                        </div>
+                    ` );
+
+                    $( '#modal' ).modal( 'show' );
+                }
+            }
+
+            function updateItem( event, form )
+            {
+                event.preventDefault();
+
+                $( '#productName' ).removeClass( 'is-invalid' );
+
+                var data = {
+                    category: form.category.value,
+                    SKU: $( '#SKU' ).val().trim(),
+                    name: form.name.value.trim(),
+                    price: form.price.value,
+                    points: form.points.value
+                }
+
+                $.ajax({
+                    method: 'POST',
+                    url: 'scripts/updateItem.php',
+                    data: { data: JSON.stringify( data ) }
+                }).done( function( info )
+                {
+                    if ( JSON.parse( info ) )
+                    {
+                        $( '#SKU' ).val( '' );
+                        $( '#SKU' ).focus();
+                        form.name.value = '';
+                        form.price.value = '';
+                        form.points.value = '';
+
+                        $( '#TextPadLower' ).hide();
+                        $( '#TextPadUpper' ).hide();
+                        $( '#modal' ).modal( 'hide' );
+                        animateCSS( '#Options', 'slideOutLeft', function()
+                        {
+                            $( '#Options' ).hide();
+                        });
+                        window.scrollTo( 0, 0 );
+                        alertify.notify( 'Información de producto actualizada.', 'success' );
+                    }else
+                    {
+                        $( '#SKU' ).focus();
+                        animateCSS( '#productName', 'shake' );
+                        $( '#productName' ).addClass( 'is-invalid' );
+                        $( '#productName' ).select();
+                    }
+                }); 
+            }
+
+            function checkSKU( event, form, action )
+            {
+                event.preventDefault();
+
+                $( '#newSKU' ).removeClass( 'is-invalid' );
+
+                var data = {
+                    action: action,
+                    SKU: form.SKU.value
+                }
+
+                $.ajax({
+                    method: 'POST',
+                    url: 'scripts/checkSKU.php',
+                    data: { data: JSON.stringify( data ) }
+                }).done( function( info )
+                {
+                    if ( action == 'new' )
+                    {
+                        if ( JSON.parse( info ).response )
+                        {
+                            $( '#SKU' ).val( $( '#newSKU' ).val() );
+
+                            $( '#modalContent' ).attr( 'onsubmit', 'addNewItem( event, this );' );
+
+                            $( '#modalContent' ).html( `
+                                <div class="modal-header">
+                                    <h5 class="modal-title">Nuevo producto</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="form-group">
+                                        <label>Elige una categoría</label>
+                                        <select class="form-control" name="category" id="categories"></select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Ingresa el nombre del producto</label>
+                                        <input type="text" name="name" id="productName" oninput="focusThis( 'addNewItem', 'productName' )" onfocus="focusThis( 'addNewItem', 'productName' )" class="form-control" autocomplete="off" required>
+                                        <div class="invalid-feedback">Producto repetido.</div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Ingresa el precio del producto</label>
+                                        <input type="text" autocomplete="off" step="0.01" min="0" id="price" name="price" class="form-control" oninput="focusThis( 'addNewItem', 'price' )" onfocus="focusThis( 'addNewItem', 'price' )" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Ingresa los puntos que este producto genera</label>
+                                        <input type="text" autocomplete="off" step="0.01" min="0" id="points" name="points" class="form-control" oninput="focusThis( 'addNewItem', 'points' )" onfocus="focusThis( 'addNewItem', 'points' )" required>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                                    <button type="submit" class="btn btn-primary">Guardar</button>
+                                </div>
+                            ` );
+
+                            for ( var i = 0; i < JSON.parse( info ).categories.length; i++ )
+                            {
+                                $( '#categories' ).append( `
+                                    <option>${ JSON.parse( info ).categories[i] }</option>
+                                ` );
+                            }
+
+                            $( '#modal' ).modal( 'show' );
+
+                            setTimeout( function(){ $( '#productName' ).focus() }, 500 );
+                        }else
+                        {
+                            animateCSS( '#newSKU', 'shake' );
+                            $( '#newSKU' ).addClass( 'is-invalid' );
+                            form.SKU.value = '';
+                            form.SKU.focus();
+                        }
+                    }else
+                    {
+                        if ( JSON.parse( info ).response )
+                        {
+                            $( '#SKU' ).val( $( '#newSKU' ).val() );
+
+                            $( '#modalContent' ).attr( 'onsubmit', 'updateItem( event, this );' );
+
+                            $( '#modalContent' ).html( `
+                                <div class="modal-header">
+                                    <h5 class="modal-title">Actualizar producto</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="form-group">
+                                        <label>Elige una categoría</label>
+                                        <select class="form-control" name="category" id="categories"></select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Ingresa el nombre del producto</label>
+                                        <input type="text" name="name" id="productName" oninput="focusThis( 'updateItem', 'productName' )" onfocus="focusThis( 'addNewItem', 'productName' )" class="form-control" autocomplete="off" value="${ JSON.parse(info ).name }" required>
+                                        <div class="invalid-feedback">Producto no existe.</div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Ingresa el precio del producto</label>
+                                        <input type="text" autocomplete="off" step="0.01" min="0" id="price" name="price" class="form-control" oninput="focusThis( 'updateItem', 'price' )" onfocus="focusThis( 'addNewItem', 'price' )" value="${ JSON.parse(info ).price }" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Ingresa los puntos que este producto genera</label>
+                                        <input type="text" autocomplete="off" step="0.01" min="0" id="points" name="points" class="form-control" oninput="focusThis( 'addNewItem', 'points' )" onfocus="focusThis( 'updateItem', 'points' )" value="${ JSON.parse(info ).points }" required>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                                    <button type="submit" class="btn btn-primary">Actualizar</button>
+                                </div>
+                            ` );
+
+                            for ( var i = 0; i < JSON.parse( info ).categories.length; i++ )
+                            {
+                                $( '#categories' ).append( `
+                                    <option>${ JSON.parse( info ).categories[i] }</option>
+                                ` );
+                            }
+
+                            $( '#categories' ).val( JSON.parse( info ).category );
+
+                            $( '#modal' ).modal( 'show' );
+
+                            setTimeout( function(){ $( '#productName' ).focus() }, 500 );
+                        }else
+                        {
+                            animateCSS( '#newSKU', 'shake' );
+                            $( '#newSKU' ).addClass( 'is-invalid' );
+                            form.SKU.value = '';
+                            form.SKU.focus();
+                        }
+                    }
+                });
+            }
+
+            function addNewCategory( event, form )
+            {
+                event.preventDefault();
+
+                $( '#categoryName' ).removeClass( 'is-invalid' );
+
+                var data = {
+                    name: form.category.value.trim()
+                }
+
+                $.ajax({
+                    method: 'POST',
+                    url: 'scripts/addNewCategory.php',
+                    data: { data: JSON.stringify( data ) }
+                }).done( function( info )
+                {
+                    if ( JSON.parse( info ) )
+                    {
+                        form.category.value = '';
+                        form.category.focus();
+
+                        $( '#TextPadLower' ).hide();
+                        $( '#TextPadUpper' ).hide();
+                        $( '#modal' ).modal( 'hide' );
+                        animateCSS( '#Options', 'slideOutLeft', function()
+                        {
+                            $( '#Options' ).hide();
+                        });
+                        window.scrollTo( 0, 0 );
+                        alertify.notify( 'Nueva categoría creada.', 'success' );
+                        $( '#SKU' ).focus();
+                    }else
+                    {
+                        form.category.select();
+                        $( '#categoryName' ).addClass( 'is-invalid' );
+                    }
+                });
+            }
+
+            function addNewItem( event, form )
+            {
+                event.preventDefault();
+
+                $( '#productName' ).removeClass( 'is-invalid' );
+
+                var data = {
+                    category: form.category.value,
+                    SKU: $( '#SKU' ).val().trim(),
+                    name: form.name.value.trim(),
+                    price: form.price.value,
+                    points: form.points.value
+                }
+
+                $.ajax({
+                    method: 'POST',
+                    url: 'scripts/addNewItem.php',
+                    data: { data: JSON.stringify( data ) }
+                }).done( function( info )
+                {
+                    if ( JSON.parse( info ) )
+                    {
+                        $( '#SKU' ).val( '' );
+                        $( '#SKU' ).focus();
+                        form.name.value = '';
+                        form.price.value = '';
+                        form.points.value = '';
+
+                        $( '#TextPadLower' ).hide();
+                        $( '#TextPadUpper' ).hide();
+                        $( '#modal' ).modal( 'hide' );
+                        animateCSS( '#Options', 'slideOutLeft', function()
+                        {
+                            $( '#Options' ).hide();
+                        });
+                        window.scrollTo( 0, 0 );
+                        alertify.notify( 'Nuevo producto creado.', 'success' );
+                    }else
+                    {
+                        $( '#SKU' ).focus();
+                        animateCSS( '#productName', 'shake' );
+                        $( '#productName' ).addClass( 'is-invalid' );
+                        $( '#productName' ).select();
+                    }
+                });    
+            }
+
+            function checkClient( event, form, action )
+            {
+                event.preventDefault();
+
+                Client = $( '#newClientCode' ).val();
+                $( '#newClientCode' ).removeClass( 'is-invalid' );
+
+                var data = {
+                    action: action,
+                    client: form.client.value.trim()
+                }
+
+                $.ajax({
+                    method: 'POST',
+                    url: 'scripts/checkClient.php',
+                    data: { data: JSON.stringify( data ) }
+                }).done( function( info )
+                {
+                    if ( action == 'new' )
+                    {
+                        if ( JSON.parse( info ).response )
+                        {
+                            addNewClientForm( 'menu' );
+                        }else
+                        {
+                            $( '#client' ).focus();
+                            animateCSS( '#newClientCode', 'shake' );
+                            $( '#newClientCode' ).addClass( 'is-invalid' );
+                            $( '#newClientCode' ).select();
+                        }
+                    }else
+                    {
+                        if ( JSON.parse( info ).response )
+                        {
+                            $( '#modalContent' ).attr( 'onsubmit', 'saveClientChanges( event );' );
+
+                            $( '#modalContent' ).html( `
+                                <div class="modal-header">
+                                    <h5 class="modal-title">Editar cliente</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="row">
+                                        <div class="col">
+                                            <table class="table">
+                                                <tbody>
+                                                    <tr>
+                                                        <td>Nombre: </td>
+                                                        <td>
+                                                            <input type="text" class="form-control" autocomplete="off" id="name" value="${ JSON.parse( info ).name }" oninput="focusThis( 'saveClientChanges', 'name' )" onfocus="focusThis( 'saveClientChanges', 'name' )" required>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Sexo: </td>
+                                                        <td>
+                                                            <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                                                                <label class="btn btn-primary active" id="menLabel">
+                                                                    <input type="radio" name="options" id="men" autocomplete="off" value="Hombre" checked> Hombre
+                                                                </label>
+                                                                <label class="btn btn-primary" id="womenLabel">
+                                                                    <input type="radio" name="options" id="women" autocomplete="off" value="Mujer"> Mujer
+                                                                </label>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Fecha de nacimiento: </td>
+                                                        <td>
+                                                            <input type="date" class="form-control" id="birthdate" value="${ JSON.parse( info ).birthdate }">
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        <div class="col">
+                                            <table class="table">
+                                                <tbody>
+                                                    <tr>
+                                                        <td>Código postal: </td>
+                                                        <td>
+                                                            <input type="number" class="form-control" autocomplete="off" oninput="focusThis( 'saveClientChanges', 'zipCode' )" onfocus="focusThis( 'saveClientChanges', 'zipCode' )" id="zipCode" value="${ JSON.parse( info ).zipCode }">
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>E-Correo: </td>
+                                                        <td>
+                                                            <input type="email" class="form-control" autocomplete="off" oninput="focusThis( 'saveClientChanges', 'email' )" onfocus="focusThis( 'saveClientChanges', 'email' )" id="email" value="${ JSON.parse( info ).email }">
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Celular: </td>
+                                                        <td>
+                                                            <input type="number" class="form-control" autocomplete="off" oninput="focusThis( 'saveClientChanges', 'cellphone' )" onfocus="focusThis( 'saveClientChanges', 'cellphone' )" id="cellphone" value="${ JSON.parse( info ).cellphone }">
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                                    <button type="submit" class="btn btn-primary">Guardar cambios</button>
+                                </div>
+                            ` );
+
+                            $( '#menLabel' ).removeClass( 'active' );
+                            $( '#men' ).removeAttr( 'checked', '' );
+                            $( '#womenLabel' ).removeClass( 'active' );
+                            $( '#women' ).removeAttr( 'checked', '' ); 
+
+                            if ( JSON.parse( info ).sex == 'Hombre' )
+                            {
+                                $( '#menLabel' ).addClass( 'active' );
+                                $( '#men' ).attr( 'checked', '' );
+                            }else
+                            {
+                                $( '#womenLabel' ).addClass( 'active' );
+                                $( '#women' ).attr( 'checked', '' );    
+                            }
+
+                            setTimeout( function(){ $( '#name' ).focus() }, 500 );
+                        }else
+                        {
+                            $( '#client' ).focus();
+                            animateCSS( '#newClientCode', 'shake' );
+                            $( '#newClientCode' ).addClass( 'is-invalid' );
+                            $( '#newClientCode' ).select();
+                        }
+                    }
+                });
+            }
+
+            function options()
+            {
+                if ( $( '#Options' ).is( ':visible' ) )
+                {
+                    window.scrollTo( 0, 0 );
+                    animateCSS( '#Options', 'slideOutLeft', function()
+                    {
+                        $( '#Options' ).hide();
+                    });
+                }else
+                {
+                    $( '#Options' ).show();
+                    animateCSS( '#Options', 'slideInLeft' );
+                }
+            }
+
+            function numberPad()
+            {
+                if ( $( '#modal' ).is( ':visible' ) )
+                {
+                    if ( $( '#TextPadUpper' ).is( ':visible' ) || $( '#TextPadLower' ).is( ':visible' ) )
+                    {
+                        $( '#TextPadLower' ).hide();
+                        $( '#TextPadUpper' ).hide();
+                    }else
+                    {
+                        $( '#TextPadUpper' ).show();
+                    }
+                }else
+                {
+                    if ( $( '#NumberPad' ).is( ':visible' ) )
+                    {
+                        window.scrollTo( 0, 0 );
+                        animateCSS( '#NumberPad', 'slideOutDown', function()
+                        {
+                            $( '#NumberPad' ).hide();
+                        });
+                        $( 'body' ).height( h - 320 );
+                    }else
+                    {
+                        $( 'body' ).height( h + 320 );
+                        $( '#NumberPad' ).show();
+                        animateCSS( '#NumberPad', 'slideInUp' );
+
+                        if ( $( '#TextPadUpper' ).is( ':visible' ) || $( '#TextPadLower' ).is( ':visible' ) )
+                        {
+                            $( '#TextPadLower' ).hide();
+                            $( '#TextPadUpper' ).hide();
+                        }
+                    }
+                }
+            }
+
+            var FocusedForm, 
+            FocusedInput;
+
+            function focusThis( FF, FI )
+            {
+                FocusedForm = FF;
+                FocusedInput = FI;
+            }
+
+            function digit( key )
+            {   
+                if ( key == 'enter' )
+                {
+                    $( '#' + FocusedForm ).submit();
+                }else if ( key == 'delete' )
+                {
+                    $( '#' + FocusedInput ).val( '' );
+                }else if ( key == 'deleteLastone' )
+                {
+                    var value = $( '#' + FocusedInput ).val();
+                    $( '#' + FocusedInput ).val( value.slice( 0, -1 ) );
+                }else
+                {
+                    var value = $( '#' + FocusedInput ).val();
+                    $( '#' + FocusedInput ).val( value += key );
+
+                    if ( FocusedInput == 'cash' || FocusedInput == 'card' )
+                    {
+                        due();
+                    }
+                }
+            }
+
+            function loading( status )
+            {
+                if ( status == 'on' )
+                {
+                    $( '#Loader' ).show();
+                    $( '#ReceiptCard' ).hide();
+                }else
+                {
+                    $( 'body' ).css( 'background-image', 'url( "tileable_wood_texture.png" )' );
+                    $( '#Loader' ).hide();
+                    // $( '#ReceiptCard' ).show();
+                    $( '#StartScreen' ).show();
+                }
+            }
+
+            function animateCSS( element, animationName, callback ) 
+            {
+                const node = document.querySelector( element );
+                node.classList.add( 'animated', animationName );
+
+                function handleAnimationEnd() 
+                {
+                    node.classList.remove( 'animated', animationName );
+                    node.removeEventListener( 'animationend', handleAnimationEnd );
+
+                    if ( typeof callback === 'function' ) callback()
+                }
+
+                node.addEventListener( 'animationend', handleAnimationEnd );
+            }
+
+            function addItemBySKU( event, form )
+            {
+                // Prevent default
+                event.preventDefault();
+
+                // Reset input for response
+                $( '#SKU' ).removeClass( 'is-invalid' );
+
+                // Send data
+                var data = {
+                    control: Date.now(),
+                    SKU: form.SKU.value
+                }
+
+                // AJAX query
+                $.ajax({
+                    method: 'POST',
+                    url: 'scripts/addItemsBySKU.php',
+                    data: { data: JSON.stringify( data ) }
+                }).done( function( info )
+                {
+                    if ( JSON.parse( info ).response )
+                    {
+                        // Draw receipt
+                        $( '#itemsTable tbody' ).append( `
+                            <tr>
+                                <td class="text-center"><i class="fas fa-trash-alt" onclick="removeThisItem( this, '${ data.control }', '${ JSON.parse( info ).price }', '${ JSON.parse( info ).points }' );"></i></td>
+                                <td class="text-center">1</td>
+                                <td>${ JSON.parse( info ).concept }</td>
+                                <td class="text-right">${ numeral( JSON.parse( info ).price ).format( '0,0.00' ) }</td>
+                            </tr>
+                        ` );
+
+                        // Set total
+                        Total += parseFloat( JSON.parse( info ).price );
+                        $( '#total' ).html( numeral( Total ).format( '$0,0.00' ) );
+
+                        // Set points
+                        Points += parseFloat( JSON.parse( info ).points );
+
+                        // Set button and form state
+                        $( '#chargeButton' ).removeClass( 'btn-secondary' );
+                        $( '#chargeButton' ).addClass( 'btn-success' );
+                        $( '#chargeButton' ).removeAttr( 'disabled' );
+                        form.SKU.value = '';
+                        form.SKU.focus;
+                    }else
+                    {
+                        animateCSS( '#SKU', 'shake' );
+                        $( '#SKU' ).addClass( 'is-invalid' );
+                        form.SKU.value = '';
+                        form.SKU.focus;
+                    }
+                });
+            }
+
+            function removeThisItem( tr, control, price, points )
+            {
+                // Sen data
+                var data = {
+                    control: control
+                }
+
+                // AJAX query
+                $.ajax({
+                    method: 'POST',
+                    url: 'scripts/removeThisItem.php',
+                    data: { data: JSON.stringify( data ) }
+                });
+
+                // Hide deleted row
+                $( tr ).parents( 'tr' ).hide();
+
+                // Set total
+                Total -= price;
+                $( '#total' ).html( numeral( Total ).format( '$0,0.00' ) );
+
+                // Set points
+                Points -= points;
+
+                // Set button and form state
+                if ( Total == 0 )
+                {
+                    $( '#chargeButton' ).removeClass( 'btn-success' );
+                    $( '#chargeButton' ).addClass( 'btn-secondary' );
+                    $( '#chargeButton' ).attr( 'disabled', '' );
+                }
+                $( '#SKU' ).focus();
+            }
+
+            function due()
+            {
+                var toSubtract = parseFloat( $( '#cash' ).val() || 0 ) + parseFloat( $( '#card' ).val() || 0 ),
+                due = Total - toSubtract;
+
+                $( '#amount' ).html( numeral( Total ).format( '$0,0.00' ) );
+
+                if (  AccumulatePoints == false )
+                {
+                    due = Total - parseFloat( ClientPoints ) - toSubtract;
+                    $( '#amount' ).html( numeral( Total - parseFloat( ClientPoints ) ).format( '$0,0.00' ) );
+                }
+                
+                if ( Total == 0 )
+                {
+                    $( '#cash' ).val( '' );
+                    $( '#card' ).val( '' );
+                    $( '#finishButton' ).html( 'Cambio $0.00');
+                    $( '#finishButton' ).removeClass( 'btn-success' );
+                    $( '#finishButton' ).addClass( 'btn-secondary' );
+                    $( '#finishButton' ).attr( 'disabled', '' );
+                }else if ( due > 0 )
+                {
+                    $( '#finishButton' ).html( 'Faltan ' + numeral( due ).format( '$0,0.00' ) );
+                    $( '#finishButton' ).removeClass( 'btn-success' );
+                    $( '#finishButton' ).addClass( 'btn-secondary' );
+                    $( '#finishButton' ).attr( 'disabled', '' );
+                }else
+                {
+                    due = due * -1;
+                    $( '#finishButton' ).html( 'Terminar | Cambio ' + numeral( due ).format( '$0,0.00' ) );
+                    $( '#finishButton' ).removeClass( 'btn-secondary' );
+                    $( '#finishButton' ).addClass( 'btn-success' );
+                    $( '#finishButton' ).removeAttr( 'disabled' );
+                }
+            }
+
+            function back()
+            {
+                animateCSS( '#ChargeDiv', 'flip', function()
+                {
+                    $( '#ReceiptCard' ).show();
+                    $( '#ChargeDiv' ).hide();
+                    $( '#SKU' ).focus();
+                });
+            }
+
+            function charge()
+            {
+                animateCSS( '#ReceiptCard', 'flip', function()
+                {
+                    $( '#ReceiptCard' ).hide();
+                    $( '#ChargeDiv' ).show();
+                    $( '#client' ).focus();
+                });
+                
+                due();
+            }
+
+            function finish()
+            {
+                if ( Client == '' )
+                {
+                    Points = 0;
+                }else if ( Client !== '' && AccumulatePoints == false )
+                {
+                    Points = ClientPoints * -1;
+                }
+
+                var data = {
+                    client: Client,
+                    cash: $( '#cash' ).val() || 0,
+                    card: $( '#card' ).val() || 0,
+                    due: ( numeral( Total ).subtract( parseFloat( $( '#cash' ).val() || 0 ) + parseFloat( $( '#card' ).val() || 0 ) ) )._value * -1,
+                    amount: Total,
+                    points: Points
+                }
+
+                $.ajax({
+                    method: 'POST',
+                    url: 'scripts/finish.php',
+                    data: { data: JSON.stringify( data ) }
+                }).done( function( info )
+                {
+                    if ( $( '#NumberPad' ).is( ':visible' ) )
+                    {
+                        window.scrollTo( 0, 0 );
+                        animateCSS( '#NumberPad', 'slideOutDown', function()
+                        {
+                            $( '#NumberPad' ).hide();
+                        });
+                        $( 'body' ).height( h - 320 );
+                    }
+
+                    Total = 0;
+                    Client = '';
+                    ClientPoints = 0;
+                    Points = 0;
+                    AccumulatePoints = false;
+
+                    $( '#itemsTable tbody' ).empty();
+                    $( '#chargeButton' ).removeClass( 'btn-success' );
+                    $( '#chargeButton' ).addClass( 'btn-secondary' );
+                    $( '#chargeButton' ).attr( 'disabled', '' );
+                    $( '#amount' ).html( '$0.00' );
+                    $( '#cash' ).val( '' );
+                    $( '#card' ).val( '' );
+                    $( '#total' ).html( '$0.00' );
+                    $( '#finishButton' ).html( 'Cambio $0.00');
+                    $( '#finishButton' ).removeClass( 'btn-success' );
+                    $( '#finishButton' ).addClass( 'btn-secondary' );
+                    $( '#finishButton' ).attr( 'disabled', '' );
+
+                    $( '#clientDiv' ).html( `
+                        <h5 class="card-title">Cliente</h5>
+                        <form class="input-group my-2" onsubmit="setClient( event, this );">
+                            <input type="number" step="1" min="0" name="client" id="client" class="form-control" placeholder="Ingresa el código de un cliente" required> 
+                        </form>
+                        <hr>
+                    ` );
+
+                    $( '#modalContent' ).attr( 'onsubmit', 'sendReceipt( event, this );' );
+
+                    $( '#modalContent' ).html( `
+                        <div class="modal-header">
+                            <h5 class="modal-title"><i class="fas fa-envelope"></i> Enviar recibo</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label class="sr-only">Correo electrónico</label>
+                                <input type="email" class="form-control" autocomplete="off" placeholder="Correo electrónico" value="${ JSON.parse( info ) }" name="email" id="email">
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="cancel( 'finish' );">Cancelar</button>
+                            <button type="submit" class="btn btn-primary"><i class="far fa-envelope"></i> Enviar</button>
+                        </div>
+                    ` );
+
+                    $( '#modal' ).modal( 'show' );
+
+                    $( '#ReceiptCard' ).show();
+                    $( '#ChargeDiv' ).hide();
+                    setTimeout( function()
+                    {
+                        $( '#email' ).select();
+                    }, 500 );
+                });
+            }
+
+            function sendReceipt( event, form )
+            {
+                event.preventDefault();
+
+                var data = {
+                    email: form.email.value
+                }
+
+                $.ajax({
+                    method: 'POST',
+                    url: 'scripts/sendReceipt.php',
+                    data: { data: JSON.stringify( data ) }
+                }).done( function( info )
+                {
+                    $( '#modal' ).modal( 'hide' );
+
+                    alertify.notify( 'Recibo enviado.', 'success' );
+                });
+            }
+
+            function setClient( event, form )
+            {
+                event.preventDefault();
+
+                var data = {
+                    client: form.client.value
+                }
+
+                Client = data.client;
+                ClientPoints = 0;
+
+                $.ajax({
+                    method: 'POST',
+                    url: 'scripts/setClient.php',
+                    data: { data: JSON.stringify( data ) }
+                }).done( function( info )
+                {
+                    AccumulatePoints = true;
+                    if ( JSON.parse( info ).response )
+                    {
+                        if ( JSON.parse( info ).points == 'No tiene puntos.' )
+                        {
+                            $( '#clientDiv' ).html( `
+                                <h5 class="card-title"><i class="fas fa-user-times mr-1" onclick="cancelSetClient();"></i> <i class="fas fa-user-edit" onclick="editClient();"></i> <span id="clientName">${ JSON.parse( info ).name }</span></h5>
+                                <span>${ JSON.parse( info ).points }</span>
+                                <hr>
+                            ` );
+                        }else
+                        {
+                            $( '#clientDiv' ).html( `
+                                <h5 class="card-title"><i class="fas fa-user-times mr-1" onclick="cancelSetClient();"></i> <i class="fas fa-user-edit" onclick="editClient();"></i> <span id="clientName">${ JSON.parse( info ).name }</span></h5>
+                                <span>Tiene ${ JSON.parse( info ).points }  puntos ¿quiere usarlos?</span>
+                                <div class="btn-group btn-group-sm btn-group-toggle" data-toggle="buttons">
+                                    <label class="btn btn-outline-primary">
+                                        <input type="radio" name="options" id="option1" autocomplete="off" onchange="setPoints();"> Sí
+                                    </label>
+                                    <label class="btn btn-outline-primary active">
+                                        <input type="radio" name="options" id="option2" autocomplete="off" onchange="setPoints();" checked> No
+                                    </label>
+                                </div>
+                                <hr>
+                            ` );
+
+                            ClientPoints = JSON.parse( info ).points;
+                        }
+                    }else
+                    {
+                        $( '#modalContent' ).html( `
+                            <div class="modal-body">
+                                <h1>El cliente que buscas no existe ¿quieres agregarlo?</h1>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="cancel( 'client' );">Cancelar</button>
+                                <button type="button" class="btn btn-primary" onclick="addNewClientForm( 'modal' );">Aceptar</button>
+                            </div>
+                        ` );
+
+                        setTimeout( function(){ $( '#name' ).focus() }, 500 );
+
+                        $( '#modal' ).modal( 'show' );
+                    }
+                });
+            }
+
+            function cancel( modal )
+            {
+                Client = '';
+                if ( modal == 'client' )
+                {
+                    $( '#client' ).val( '' );
+                    $( '#client' ).focus();
+                }else if ( modal == 'finish' )
+                {
+                    window.scrollTo( 0, 0 );
+                    $( '#SKU' ).focus();
+                }
+            }
+
+            function addNewClientForm( method )
+            {
+                $( '#modalContent' ).attr( 'onsubmit', 'addNewClient( event, \"'+method+'\" );' );
+
+                $( '#modalContent' ).html( `
+                    <div class="modal-header">
+                        <h5 class="modal-title">Agregar nuevo cliente</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col">
+                                <table class="table">
+                                    <tbody>
+                                        <tr>
+                                            <td>Nombre: </td>
+                                            <td>
+                                                <input type="text" class="form-control" autocomplete="off" oninput="focusThis( 'addNewClient', 'name' )" onfocus="focusThis( 'addNewClient', 'name' )" id="name" required>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Sexo: </td>
+                                            <td>
+                                                <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                                                    <label class="btn btn-primary active">
+                                                        <input type="radio" name="options" id="men" autocomplete="off" value="Hombre" checked> Hombre
+                                                    </label>
+                                                    <label class="btn btn-primary">
+                                                        <input type="radio" name="options" id="women" autocomplete="off" value="Mujer"> Mujer
+                                                    </label>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Fecha de nacimiento: </td>
+                                            <td>
+                                                <input type="date" class="form-control" id="birthdate">
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="col">
+                                <table class="table">
+                                    <tbody>
+                                        <tr>
+                                            <td>Código postal: </td>
+                                            <td>
+                                                <input type="number" class="form-control" autocomplete="off" oninput="focusThis( 'addNewClient', 'zipCode' )" onfocus="focusThis( 'addNewClient', 'zipCode' )" id="zipCode">
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>E-Correo: </td>
+                                            <td>
+                                                <input type="email" class="form-control" autocomplete="off" autocomplete="off" oninput="focusThis( 'addNewClient', 'email' )" onfocus="focusThis( 'addNewClient', 'email' )" id="email">
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Celular: </td>
+                                            <td>
+                                                <input type="number" class="form-control" autocomplete="off" oninput="focusThis( 'addNewClient', 'cellphone' )" onfocus="focusThis( 'addNewClient', 'cellphone' )" id="cellphone">
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-primary">Guardar</button>
+                    </div>
+                ` );
+
+                $( '#modal' ).modal( 'show' );
+
+                setTimeout( function(){ $( '#name' ).focus() }, 500 );
+            }
+
+            function addNewClient( event, method )
+            {
+                event.preventDefault();
+
+                var data = {
+                    client: Client,
+                    name: $( '#name' ).val(),
+                    sex:  ( $( '#men' ).is( ':checked' ) ) ? 'Hombre' : 'Mujer',
+                    birthdate: $( '#birthdate' ).val(),
+                    zipCode: $( '#zipCode' ).val(),
+                    email: $( '#email' ).val(),
+                    cellphone: $( '#cellphone' ).val()
+                }
+
+                $.ajax({
+                    method: 'POST',
+                    url: 'scripts/addNewClient.php',
+                    data: { data: JSON.stringify( data ) }
+                }).done( function( info )
+                {
+                    if ( method == 'menu' )
+                    {
+                        $( '#TextPadLower' ).hide();
+                        $( '#TextPadUpper' ).hide();
+                        $( '#modal' ).modal( 'hide' );
+                        animateCSS( '#Options', 'slideOutLeft', function()
+                        {
+                            $( '#Options' ).hide();
+                        });
+                        window.scrollTo( 0, 0 );
+                        alertify.notify( 'Nuevo cliente guardado.', 'success' );
+
+                        $( '#modal' ).modal( 'hide' );
+                    }else
+                    {
+                        $( '#clientDiv' ).html( `
+                            <h5 class="card-title"><i class="fas fa-user-times mr-1" onclick="cancelSetClient();"></i> <i class="fas fa-user-edit" onclick="editClient();"></i> ${ data.name }</h5>
+                            <span>No tiene puntos.</span>
+                            <hr>
+                        ` );
+
+                        $( '#modal' ).modal( 'hide' );
+                    }
+                });
+            }
+
+            function cancelSetClient()
+            {
+                $( '#clientDiv' ).html( `
+                    <h5 class="card-title">Cliente</h5>
+                    <form class="input-group my-2" onsubmit="setClient( event, this );">
+                        <input type="number" step="1" min="0" name="client" id="client" class="form-control" placeholder="Ingresa el código de un cliente" required> 
+                    </form>
+                    <hr>
+                ` );
+
+                $( '#clientDiv input[name=client]' ).focus();
+
+                Client = '';
+                ClientPoints = 0;
+                AccumulatePoints = false;
+            }
+
+            function editClient()
+            {
+                var data = {
+                    client: Client
+                }
+
+                $.ajax({
+                    method: 'POST',
+                    url: 'scripts/bringClientData.php',
+                    data: { data: JSON.stringify( data ) }
+                }).done( function( info )
+                {
+                    $( '#modalContent' ).attr( 'onsubmit', 'saveClientChanges( event );' );
+
+                    $( '#modalContent' ).html( `
+                        <div class="modal-header">
+                            <h5 class="modal-title">Editar cliente</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="row">
+                                <div class="col">
+                                    <table class="table">
+                                        <tbody>
+                                            <tr>
+                                                <td>Nombre: </td>
+                                                <td>
+                                                    <input type="text" class="form-control" autocomplete="off" oninput="focusThis( 'saveClientChanges', 'name' )" onfocus="focusThis( 'saveClientChanges', 'name' )" id="name" value="${ JSON.parse( info ).name }" required>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>Sexo: </td>
+                                                <td>
+                                                    <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                                                        <label class="btn btn-primary active" id="menLabel">
+                                                            <input type="radio" name="options" id="men" autocomplete="off" value="Hombre" checked> Hombre
+                                                        </label>
+                                                        <label class="btn btn-primary" id="womenLabel">
+                                                            <input type="radio" name="options" id="women" autocomplete="off" value="Mujer"> Mujer
+                                                        </label>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>Fecha de nacimiento: </td>
+                                                <td>
+                                                    <input type="date" class="form-control" id="birthdate" value="${ JSON.parse( info ).birthdate }">
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="col">
+                                    <table class="table">
+                                        <tbody>
+                                            <tr>
+                                                <td>Código postal: </td>
+                                                <td>
+                                                    <input type="number" class="form-control" autocomplete="off" oninput="focusThis( 'saveClientChanges', 'zipCode' )" onfocus="focusThis( 'saveClientChanges', 'zipCode' )" id="zipCode" value="${ JSON.parse( info ).zipCode }">
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>E-Correo: </td>
+                                                <td>
+                                                    <input type="email" class="form-control" autocomplete="off" oninput="focusThis( 'saveClientChanges', 'email' )" onfocus="focusThis( 'saveClientChanges', 'email' )" id="email" value="${ JSON.parse( info ).email }">
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>Celular: </td>
+                                                <td>
+                                                    <input type="number" class="form-control" autocomplete="off" oninput="focusThis( 'saveClientChanges', 'cellphone' )" onfocus="focusThis( 'saveClientChanges', 'cellphone' )" id="cellphone" value="${ JSON.parse( info ).cellphone }">
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                            <button type="submit" class="btn btn-primary">Guardar cambios</button>
+                        </div>
+                    ` );
+
+                    $( '#menLabel' ).removeClass( 'active' );
+                    $( '#men' ).removeAttr( 'checked', '' );
+                    $( '#womenLabel' ).removeClass( 'active' );
+                    $( '#women' ).removeAttr( 'checked', '' ); 
+
+                    if ( JSON.parse( info ).sex == 'Hombre' )
+                    {
+                        $( '#menLabel' ).addClass( 'active' );
+                        $( '#men' ).attr( 'checked', '' );
+                    }else
+                    {
+                        $( '#womenLabel' ).addClass( 'active' );
+                        $( '#women' ).attr( 'checked', '' );    
+                    }
+
+                    $( '#modal' ).modal( 'show' );
+
+                    setTimeout( function(){ $( '#name' ).focus() }, 500 );
+                });
+            }
+
+            function saveClientChanges()
+            {
+                event.preventDefault();
+
+                var data = {
+                    client: Client,
+                    name: $( '#name' ).val(),
+                    sex:  ( $( '#men' ).is( ':checked' ) ) ? 'Hombre' : 'Mujer',
+                    birthdate: $( '#birthdate' ).val(),
+                    zipCode: $( '#zipCode' ).val(),
+                    email: $( '#email' ).val(),
+                    cellphone: $( '#cellphone' ).val()
+                }
+
+                $.ajax({
+                    method: 'POST',
+                    url: 'scripts/saveClientChanges.php',
+                    data: { data: JSON.stringify( data ) }
+                }).done( function( info )
+                {
+                    $( '#clientName' ).html( data.name );
+
+                    $( '#TextPadLower' ).hide();
+                    $( '#TextPadUpper' ).hide();
+                    $( '#modal' ).modal( 'hide' );
+                    animateCSS( '#Options', 'slideOutLeft', function()
+                    {
+                        $( '#Options' ).hide();
+                    });
+                    window.scrollTo( 0, 0 );
+                    alertify.notify( 'Información del cliente actualizada.', 'success' );    
+                });
+            }
+
+            function setPoints()
+            {
+                if ( AccumulatePoints )
+                {
+                    AccumulatePoints = false;
+
+                    due();
+                }else
+                {
+                    AccumulatePoints = true;
+
+                    due();
+                }
+            }
+
+            $( '#modal' ).on( 'hide.bs.modal', function ( event ) 
+            {
+                $( '#NumberPadButton' ).removeClass( 'text-white' );
+            });
+
+            $( '#modal' ).on( 'show.bs.modal', function ( event ) 
+            {
+                $( '#NumberPadButton' ).addClass( 'text-white' );
+            });
+        </script>
+    </body>
+</html>
